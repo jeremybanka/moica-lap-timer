@@ -8,13 +8,11 @@ const clockStringify = (natural:number): string =>
     ? `0${natural}`
     : `${natural}`
 
-const printTime = (ms:number): string => {
+const msToClockUnits = (ms:number): string[] => {
   let hr = 0
   let mn = 0
   let sc = 0
   let cs = 0
-
-  console.log(ms)
 
   while (ms > MS_PER_HR) {
     ms -= MS_PER_HR
@@ -33,14 +31,18 @@ const printTime = (ms:number): string => {
     cs += 1
   }
 
-  console.log(hr, mn, sc, cs)
-
   const hrStr = clockStringify(hr)
   const mnStr = clockStringify(mn)
   const scStr = clockStringify(sc)
   const csStr = clockStringify(cs)
 
-  return `${hrStr}:${mnStr}:${scStr}.${csStr}`
+  return [hrStr, mnStr, scStr, csStr]
 }
 
-export default printTime
+const clockUnitsToString = ([hrStr, mnStr, scStr, csStr]:string[]): string =>
+  `${hrStr}:${mnStr}:${scStr}.${csStr}`
+
+const msToClockString = (ms:number): string =>
+  clockUnitsToString(msToClockUnits(ms))
+
+export { msToClockUnits, msToClockString, clockUnitsToString }

@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useMemo } from 'react'
 import useStore from '../store'
-import printTime from '../util/printTime'
+import { msToClockUnits } from '../util/printTime'
 
 const Timer: React.FC = () => {
   const timerStore = useStore()
@@ -19,7 +19,7 @@ const Timer: React.FC = () => {
 
   const printedLaps = useMemo(() =>
     timerStore.lapTimes.map(
-      lapTime => printTime(lapTime)
+      lapTime => msToClockUnits(lapTime)
     ), [timerStore.lapTimes])
 
   // console.log(timerStore)
@@ -38,7 +38,7 @@ const Timer: React.FC = () => {
           ))
         }
       </ul>
-      {timerStore.msElapsed}
+      {msToClockUnits(timerStore.msElapsed)}
     </div>
   )
 }
