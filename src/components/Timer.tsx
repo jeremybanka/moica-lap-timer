@@ -1,5 +1,6 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import useStore from '../store'
+import printTime from '../util/printTime'
 
 const Timer: React.FC = () => {
   const timerStore = useStore()
@@ -16,6 +17,11 @@ const Timer: React.FC = () => {
     return () => clearInterval(timerId)
   }, [timerStore.isRunning])
 
+  const printedLaps = useMemo(() =>
+    timerStore.lapTimes.map(
+      lapTime => printTime(lapTime)
+    ), [timerStore.lapTimes])
+
   // console.log(timerStore)
   return (
     <div className="container">
@@ -27,7 +33,7 @@ const Timer: React.FC = () => {
       </button>
       <ul>
         {
-          timerStore.laps.map((lap, idx) => (
+          printedLaps.map((lap, idx) => (
             <li key={idx}>{lap}</li>
           ))
         }
