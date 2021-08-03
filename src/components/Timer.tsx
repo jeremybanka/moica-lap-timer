@@ -1,9 +1,12 @@
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react"
 import { useEffect, useCallback, useMemo } from 'react'
 import useStore from '../store'
 import { msToClockUnits } from '../util/printTime'
 
 const Timer: React.FC = () => {
   const timerStore = useStore()
+  const [hr, mn, sc, cs] = msToClockUnits(timerStore.msElapsed)
 
   const tick = useCallback(async () => timerStore.tick(), [])
 
@@ -24,13 +27,17 @@ const Timer: React.FC = () => {
 
   // console.log(timerStore)
   return (
-    <div className="container">
-      <button type="button" onClick={() => timerStore.toggleRunning()}>
-        {timerStore.isRunning ? `Stop` : `Start`}
-      </button>
-      <button type="button" onClick={() => timerStore.recordLap()}>
-        Lap
-      </button>
+    <div css={css`
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    `}
+    >
+      <h1>
+        {
+          `${hr}:${mn}:${sc}.${cs}`
+        }
+      </h1>
       <ul>
         {
           printedLaps.map((lap, idx) => (
@@ -38,7 +45,14 @@ const Timer: React.FC = () => {
           ))
         }
       </ul>
-      {msToClockUnits(timerStore.msElapsed)}
+      <section>
+        <button type="button" onClick={() => timerStore.toggleRunning()}>
+          {timerStore.isRunning ? `Stop` : `Start`}
+        </button>
+        <button type="button" onClick={() => timerStore.recordLap()}>
+          Lap
+        </button>
+      </section>
     </div>
   )
 }
