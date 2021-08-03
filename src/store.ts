@@ -4,42 +4,37 @@ import produce from 'immer'
 type setter = (fn:((state:TimerStore) => void)) => void
 
 interface TimerStore {
-  tickDurationInMs: Readonly<number>
-  msElapsed: number
-  isRunning: boolean
-  laps: number[]
   set: setter
+  isRunning: boolean
+  lapTimes: number[]
+  msElapsed: number
   recordLap: () => void
   tick: () => void
+  tickDurationInMs: Readonly<number>
   toggleRunning: () => void
 }
 
-const useStore = create<TimerStore>((setState, get) => {
+const useStore = create<TimerStore>((setState, getState) => {
   // immer's produce() grants the use of mutation patterns without the drawbacks
   const set: setter = fn => setState(produce(fn))
-  const intoSum = (acc = 0, current = 0): number => acc + current
+  const intoSum = (acc: number, current: number) => acc + current
   return ({
     set,
-    tickDurationInMs: 10,
+    lapTimes: [],
     isRunning: false,
-    laps: [],
     msElapsed: 0,
     recordLap: () =>
-      get().isRunning
+      getState().isRunning
         ? set(state => {
-          const priorLapsTotalMs = state.laps.reduce(intoSum, 0)
-          const lapTime = state.msElapsed - priorLapsTotalMs
-          state.laps.push(lapTime)
+          const priorLapTimesTotal = state.lapTimes.reduce(intoSum, 0)
+          const lapTime = state.msElapsed - priorLapTimesTotal
+          state.lapTimes.push(lapTime)
         })
         : undefined,
     tick: () => set(state => { state.msElapsed += state.tickDurationInMs }),
+    tickDurationInMs: 10,
     toggleRunning: () => set(state => { state.isRunning = !state.isRunning }),
   })
 })
 
 export default useStore
-
-// const [timerIsRunning, setTimerIsRunning] = useState(false)
-//   const [millisecondsElapsed, setMillisecondsElapsed] = useState(0)
-//   const emptyLaps: number[] = []
-//   const [laps, setLaps] = useState(emptyLaps)
