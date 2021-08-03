@@ -118,7 +118,7 @@ module.exports = {
     ],
     "operator-linebreak": [
       `error`,
-      `after`,
+      `before`,
       { overrides: { "?": `before`, ":": `before` } },
     ],
     "prefer-destructuring": [
